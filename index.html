@@ -1,0 +1,660 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tax Education & Tax Compliance Survey — TaTU</title>
+<style>
+  :root{
+    --green:#0B7A3D;
+    --green-dark:#075A2C;
+    --green-pale:#EAF6EE;
+    --gold:#C9971F;
+    --gold-pale:#FBF3DF;
+    --red:#C8102E;
+    --ink:#1B1B18;
+    --paper:#FFFDF8;
+    --line:#E4DFD2;
+    --muted:#6B6659;
+    --radius:10px;
+    font-size:16px;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    background:var(--paper);
+    color:var(--ink);
+    font-family:'Segoe UI',-apple-system,BlinkMacSystemFont,Roboto,Helvetica,Arial,sans-serif;
+    line-height:1.5;
+  }
+  .banner{
+    background:linear-gradient(135deg,var(--green) 0%,var(--green-dark) 100%);
+    color:#fff;
+    padding:28px 20px 22px;
+    text-align:center;
+    position:relative;
+    border-bottom:6px solid var(--gold);
+  }
+  .banner::after{
+    content:"";
+    position:absolute;
+    left:0;right:0;bottom:-6px;
+    height:3px;
+    background:var(--red);
+  }
+  .banner .crest{
+    width:64px;height:64px;
+    margin:0 auto 10px;
+    border-radius:50%;
+    background:var(--gold);
+    border:3px solid #fff;
+    display:flex;align-items:center;justify-content:center;
+    font-weight:800;
+    color:var(--green-dark);
+    font-size:14px;
+    letter-spacing:0.5px;
+  }
+  .banner h1{
+    margin:0 0 4px;
+    font-size:1.35rem;
+    letter-spacing:0.3px;
+  }
+  .banner p.sub{
+    margin:2px 0;
+    font-size:0.85rem;
+    color:var(--gold-pale);
+    text-transform:uppercase;
+    letter-spacing:1px;
+  }
+  .banner h2{
+    margin:14px auto 0;
+    max-width:640px;
+    font-size:1rem;
+    font-weight:600;
+    color:#fff;
+  }
+  main{
+    max-width:720px;
+    margin:0 auto;
+    padding:22px 16px 60px;
+  }
+  .intro{
+    background:var(--green-pale);
+    border:1px solid var(--line);
+    border-left:5px solid var(--green);
+    border-radius:var(--radius);
+    padding:16px 18px;
+    font-size:0.93rem;
+    margin-bottom:22px;
+  }
+  .intro p{margin:0 0 10px;}
+  .intro p:last-child{margin-bottom:0;}
+  .consent{
+    display:flex;
+    gap:10px;
+    align-items:flex-start;
+    background:#fff;
+    border:1px solid var(--gold);
+    border-radius:var(--radius);
+    padding:14px 16px;
+    margin-top:14px;
+    font-size:0.92rem;
+  }
+  .consent input{margin-top:3px;width:18px;height:18px;accent-color:var(--green);flex-shrink:0;}
+  section.block{
+    margin-bottom:26px;
+  }
+  .section-head{
+    background:var(--green);
+    color:#fff;
+    padding:10px 14px;
+    border-radius:8px 8px 0 0;
+    font-size:0.95rem;
+    font-weight:700;
+    letter-spacing:0.3px;
+    border-left:5px solid var(--gold);
+  }
+  .section-note{
+    background:var(--gold-pale);
+    border:1px solid var(--line);
+    border-top:none;
+    padding:9px 14px;
+    font-size:0.83rem;
+    color:var(--muted);
+  }
+  .section-body{
+    border:1px solid var(--line);
+    border-top:none;
+    border-radius:0 0 8px 8px;
+    padding:14px;
+    background:#fff;
+  }
+  .q{
+    margin-bottom:18px;
+    padding-bottom:16px;
+    border-bottom:1px dashed var(--line);
+  }
+  .q:last-child{margin-bottom:0;border-bottom:none;padding-bottom:0;}
+  .q > label.qlabel{
+    display:block;
+    font-weight:600;
+    margin-bottom:9px;
+    font-size:0.94rem;
+  }
+  .req{color:var(--red);font-weight:700;margin-left:2px;}
+  .options{
+    display:flex;
+    flex-wrap:wrap;
+    gap:8px;
+  }
+  .opt{
+    border:1px solid var(--line);
+    border-radius:8px;
+    padding:8px 12px;
+    display:flex;
+    align-items:center;
+    gap:8px;
+    font-size:0.9rem;
+    cursor:pointer;
+    background:#fdfcf9;
+    transition:border-color .15s, background .15s;
+  }
+  .opt:hover{border-color:var(--green);}
+  .opt input{accent-color:var(--green);width:16px;height:16px;}
+  .opt.has-other{flex-basis:100%;}
+  .other-input{
+    margin-top:8px;
+    width:100%;
+    padding:9px 10px;
+    border:1px solid var(--line);
+    border-radius:6px;
+    font-size:0.9rem;
+    display:none;
+    font-family:inherit;
+  }
+  .other-input.active{display:block;}
+  textarea{
+    width:100%;
+    min-height:70px;
+    padding:9px 10px;
+    border:1px solid var(--line);
+    border-radius:6px;
+    font-family:inherit;
+    font-size:0.9rem;
+    resize:vertical;
+  }
+  .likert-card{
+    background:#fdfcf9;
+    border:1px solid var(--line);
+    border-radius:8px;
+    padding:12px 12px 10px;
+  }
+  .likert-stmt{
+    font-size:0.9rem;
+    font-weight:600;
+    margin-bottom:10px;
+  }
+  .likert-scale{
+    display:grid;
+    grid-template-columns:repeat(5,1fr);
+    gap:6px;
+  }
+  .likert-opt{
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    gap:4px;
+    border:1px solid var(--line);
+    border-radius:8px;
+    padding:8px 4px;
+    cursor:pointer;
+    font-size:0.68rem;
+    text-align:center;
+    color:var(--muted);
+    background:#fff;
+  }
+  .likert-opt input{accent-color:var(--green);width:16px;height:16px;}
+  .likert-opt span.num{font-weight:700;color:var(--ink);font-size:0.85rem;}
+  .likert-legend{
+    display:flex;justify-content:space-between;
+    font-size:0.68rem;color:var(--muted);
+    margin-bottom:6px;
+  }
+  .submit-wrap{
+    text-align:center;
+    margin-top:30px;
+  }
+  button#submitBtn{
+    background:var(--green);
+    color:#fff;
+    border:none;
+    padding:14px 40px;
+    font-size:1rem;
+    font-weight:700;
+    border-radius:30px;
+    cursor:pointer;
+    box-shadow:0 4px 12px rgba(11,122,61,0.3);
+    letter-spacing:0.3px;
+  }
+  button#submitBtn:disabled{
+    background:#a9a9a2;
+    cursor:not-allowed;
+    box-shadow:none;
+  }
+  button#submitBtn:hover:not(:disabled){background:var(--green-dark);}
+  .error-msg{
+    color:var(--red);
+    font-size:0.8rem;
+    margin-top:6px;
+    display:none;
+  }
+  .error-msg.show{display:block;}
+  .q.invalid .qlabel{color:var(--red);}
+  .q.invalid .options{outline:1px solid var(--red);border-radius:8px;padding:4px;}
+  #statusMsg{
+    text-align:center;
+    font-size:0.85rem;
+    margin-top:10px;
+    min-height:20px;
+    color:var(--muted);
+  }
+  .thankyou{
+    max-width:520px;
+    margin:60px auto;
+    text-align:center;
+    padding:0 16px;
+  }
+  .thankyou .crest{
+    width:70px;height:70px;
+    margin:0 auto 16px;
+    border-radius:50%;
+    background:var(--gold);
+    border:3px solid var(--green);
+    display:flex;align-items:center;justify-content:center;
+    font-weight:800;color:var(--green-dark);
+  }
+  .thankyou h2{color:var(--green-dark);margin-bottom:8px;}
+  .hidden{display:none !important;}
+  footer{
+    text-align:center;
+    font-size:0.75rem;
+    color:var(--muted);
+    padding:20px;
+  }
+</style>
+</head>
+<body>
+
+<div class="banner">
+  <div class="crest">TaTU</div>
+  <h1>TAMALE TECHNICAL UNIVERSITY</h1>
+  <p class="sub">School of Business and Management Studies — Department of Accountancy and Taxation</p>
+  <h2>The Effect of Tax Education on Tax Compliance among Small and Medium Enterprises in the Tamale Metropolis</h2>
+</div>
+
+<main>
+  <div id="formView">
+    <div class="intro">
+      <p><strong>Dear Respondent,</strong></p>
+      <p>We are final-year BSc Taxation students of the Department of Accountancy and Taxation, Tamale Technical University. This questionnaire forms part of an academic study on the effect of tax education on tax compliance among small and medium enterprises in the Tamale Metropolis. Your participation is entirely voluntary, and you may withdraw at any time without consequence.</p>
+      <p>Your responses are anonymous and strictly confidential — do not write your name, business name, or TIN anywhere. The information will be used for academic purposes only and will not be shared with the Ghana Revenue Authority or any other body. Completing the questionnaire takes approximately 15–20 minutes.</p>
+      <div class="consent">
+        <input type="checkbox" id="consent" required>
+        <label for="consent">I consent to participate in this study.</label>
+      </div>
+      <div class="error-msg" id="consentError">Please provide consent to continue.</div>
+    </div>
+
+    <form id="surveyForm" novalidate>
+
+      <!-- SECTION A -->
+      <section class="block">
+        <div class="section-head">SECTION A: Demographic and Business Characteristics</div>
+        <div class="section-note">Please tick the option that applies to you.</div>
+        <div class="section-body" id="sectionA"></div>
+      </section>
+
+      <!-- SECTION B -->
+      <section class="block">
+        <div class="section-head">SECTION B: Tax Knowledge</div>
+        <div class="section-note">1 = Strongly disagree · 2 = Disagree · 3 = Neutral · 4 = Agree · 5 = Strongly agree</div>
+        <div class="section-body" id="sectionB"></div>
+      </section>
+
+      <!-- SECTION C -->
+      <section class="block">
+        <div class="section-head">SECTION C: Tax Education</div>
+        <div class="section-note">1 = Strongly disagree · 2 = Disagree · 3 = Neutral · 4 = Agree · 5 = Strongly agree</div>
+        <div class="section-body" id="sectionC"></div>
+      </section>
+
+      <!-- SECTION D -->
+      <section class="block">
+        <div class="section-head">SECTION D: Tax Compliance</div>
+        <div class="section-note">1 = Strongly disagree · 2 = Disagree · 3 = Neutral · 4 = Agree · 5 = Strongly agree</div>
+        <div class="section-body" id="sectionD"></div>
+      </section>
+
+      <!-- SECTION E -->
+      <section class="block">
+        <div class="section-head">SECTION E: Challenges in Understanding Tax Regulations</div>
+        <div class="section-note">1 = Strongly disagree · 2 = Disagree · 3 = Neutral · 4 = Agree · 5 = Strongly agree</div>
+        <div class="section-body" id="sectionE"></div>
+      </section>
+
+      <div class="submit-wrap">
+        <button type="submit" id="submitBtn">Submit Questionnaire</button>
+        <div id="statusMsg"></div>
+      </div>
+    </form>
+  </div>
+
+  <div class="thankyou hidden" id="thankyouView">
+    <div class="crest">TaTU</div>
+    <h2>Thank you!</h2>
+    <p>Your response has been recorded. We sincerely appreciate the time you took to complete this questionnaire.</p>
+  </div>
+</main>
+
+<footer>Tamale Technical University · Department of Accountancy and Taxation · This survey is anonymous.</footer>
+
+<script>
+/* ============ CONFIGURATION ============ */
+// Replace with your deployed Google Apps Script Web App URL (see SETUP_INSTRUCTIONS.md)
+const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzJ5ZEdq954feOBYtXxukjdXlBMKD2AHzIBs1AK7Z4dkC0v2hiFQCkPWHZz4Q2FNwp1lA/exec";
+
+/* ============ DATA ============ */
+const sectionA = [
+  {id:"A1", label:"A1. Gender", options:["Male","Female"]},
+  {id:"A2", label:"A2. Age (in years)", options:["18–29","30–39","40–49","50 and above"]},
+  {id:"A3", label:"A3. Highest level of education", options:["No formal education","Basic education","Secondary/vocational education","Tertiary education"]},
+  {id:"A4", label:"A4. Type of business", options:["Trading","Services","Agro-processing","Hospitality","Light manufacturing","Other"], other:true},
+  {id:"A5", label:"A5. Number of years the business has been in operation", options:["Less than 1 year","1–5 years","6–10 years","More than 10 years"]},
+  {id:"A6", label:"A6. Is your business registered with any authority?", options:["Registered with the Registrar of Companies/ORC","Registered with the Metropolitan Assembly only","Not registered"]},
+  {id:"A7", label:"A7. Number of employees (including yourself)", options:["1–5","6–29","30–99"]}
+];
+
+const sectionB = [
+  "I know the types of taxes my business is required to pay (e.g., income tax, VAT).",
+  "I understand how to register my business with the GRA and obtain a Taxpayer Identification Number (TIN).",
+  "I know when tax returns for my business must be filed.",
+  "I understand how the tax payable by my business is calculated.",
+  "I am aware of the penalties for late filing or non-payment of taxes.",
+  "I understand the record-keeping requirements for tax purposes.",
+  "I know where to obtain information or assistance on tax matters.",
+  "I can distinguish the taxes I pay to the GRA from the levies and fees charged by the Metropolitan Assembly."
+];
+
+const sectionC = [
+  "I have attended a tax education seminar or workshop organised by the GRA.",
+  "I have received tax education through radio or television programmes.",
+  "I have seen tax education messages on social media platforms (e.g., Facebook, X, WhatsApp, TikTok).",
+  "I have visited or contacted a GRA taxpayer service centre for information or assistance.",
+  "I have received tax education through community or market-based programmes.",
+  "GRA officials have visited my business to explain tax obligations.",
+  "I have received printed materials (leaflets, posters, brochures) explaining tax matters.",
+  "Overall, the tax education I have received has improved my understanding of my tax obligations."
+];
+
+const sectionD = [
+  "My business is registered with the GRA and has a Taxpayer Identification Number (TIN).",
+  "I file my business tax returns on time.",
+  "I declare the full income of my business when filing returns.",
+  "I pay the taxes due from my business on or before the deadline.",
+  "I keep proper records of my business transactions for tax purposes.",
+  "I comply with my tax obligations even when I believe non-compliance would not be detected.",
+  "I have never been penalised for late filing or non-payment of taxes.",
+  "I consider paying taxes a civic duty that I willingly fulfil."
+];
+
+const sectionE = [
+  "Tax laws and regulations are too complex for me to understand.",
+  "Frequent changes in tax laws make it difficult to keep up to date.",
+  "Tax information is not available in a language I easily understand.",
+  "The cost of complying with taxes (time, money, record keeping) is high for my business.",
+  "I find it difficult to access GRA offices or officials for assistance.",
+  "Tax education programmes rarely reach businesses like mine.",
+  "I do not understand how the taxes I pay are used by government.",
+  "The procedures for filing and paying taxes are complicated."
+];
+
+const likertLabels = ["Strongly\ndisagree","Disagree","Neutral","Agree","Strongly\nagree"];
+
+/* ============ RENDER SECTION A ============ */
+const secA = document.getElementById("sectionA");
+sectionA.forEach(q=>{
+  const div = document.createElement("div");
+  div.className = "q";
+  div.dataset.qid = q.id;
+
+  const label = document.createElement("label");
+  label.className = "qlabel";
+  label.textContent = q.label;
+  label.innerHTML += '<span class="req">*</span>';
+  div.appendChild(label);
+
+  const opts = document.createElement("div");
+  opts.className = "options";
+
+  q.options.forEach(optText=>{
+    const isOther = q.other && optText === "Other";
+    const wrap = document.createElement("label");
+    wrap.className = "opt" + (isOther ? " has-other" : "");
+    const input = document.createElement("input");
+    input.type = "radio";
+    input.name = q.id;
+    input.value = isOther ? "Other" : optText;
+    input.required = true;
+    wrap.appendChild(input);
+    const span = document.createElement("span");
+    span.textContent = isOther ? "Other (please specify)" : optText;
+    wrap.appendChild(span);
+
+    if(isOther){
+      const otherBox = document.createElement("input");
+      otherBox.type = "text";
+      otherBox.className = "other-input";
+      otherBox.name = q.id + "_other";
+      otherBox.placeholder = "Please specify";
+      wrap.appendChild(otherBox);
+
+      input.addEventListener("change", ()=>{
+        div.querySelectorAll('input[type=radio]').forEach(r=>{
+          if(r!==input){
+            const ob = r.closest('.opt').querySelector('.other-input');
+          }
+        });
+        otherBox.classList.add("active");
+        otherBox.required = true;
+      });
+    }
+
+    opts.appendChild(wrap);
+  });
+
+  // hide other-inputs on other options when a non-other option is chosen
+  div.addEventListener("change", (e)=>{
+    if(e.target.type === "radio"){
+      div.querySelectorAll(".other-input").forEach(ob=>{
+        if(e.target.value !== "Other"){
+          ob.classList.remove("active");
+          ob.required = false;
+          ob.value = "";
+        }
+      });
+      div.classList.remove("invalid");
+    }
+  });
+
+  div.appendChild(opts);
+  const err = document.createElement("div");
+  err.className = "error-msg";
+  err.textContent = "This field is required.";
+  div.appendChild(err);
+  secA.appendChild(div);
+});
+
+/* ============ RENDER LIKERT SECTIONS ============ */
+function renderLikert(containerId, items, prefix){
+  const container = document.getElementById(containerId);
+  items.forEach((stmt, idx)=>{
+    const qid = prefix + (idx+1);
+    const q = document.createElement("div");
+    q.className = "q";
+    q.dataset.qid = qid;
+
+    const label = document.createElement("label");
+    label.className = "qlabel";
+    label.innerHTML = (idx+1) + ". " + stmt + '<span class="req">*</span>';
+    q.appendChild(label);
+
+    const card = document.createElement("div");
+    card.className = "likert-card";
+
+    const legend = document.createElement("div");
+    legend.className = "likert-legend";
+    legend.innerHTML = "<span>Strongly disagree</span><span>Strongly agree</span>";
+    card.appendChild(legend);
+
+    const scale = document.createElement("div");
+    scale.className = "likert-scale";
+    for(let v=1; v<=5; v++){
+      const opt = document.createElement("label");
+      opt.className = "likert-opt";
+      const input = document.createElement("input");
+      input.type = "radio";
+      input.name = qid;
+      input.value = v;
+      input.required = true;
+      opt.appendChild(input);
+      const num = document.createElement("span");
+      num.className = "num";
+      num.textContent = v;
+      opt.appendChild(num);
+      scale.appendChild(opt);
+    }
+    card.appendChild(scale);
+    q.appendChild(card);
+
+    const err = document.createElement("div");
+    err.className = "error-msg";
+    err.textContent = "Please select a rating.";
+    q.appendChild(err);
+
+    q.addEventListener("change", ()=> q.classList.remove("invalid"));
+
+    container.appendChild(q);
+  });
+}
+renderLikert("sectionB", sectionB, "B");
+renderLikert("sectionC", sectionC, "C");
+renderLikert("sectionD", sectionD, "D");
+renderLikert("sectionE", sectionE, "E");
+
+// E9 / E10 optional open-ended questions appended after E8
+(function addOpenEnded(){
+  const container = document.getElementById("sectionE");
+
+  const mk = (id, text)=>{
+    const q = document.createElement("div");
+    q.className = "q";
+    const label = document.createElement("label");
+    label.className = "qlabel";
+    label.textContent = text + " (Optional)";
+    q.appendChild(label);
+    const ta = document.createElement("textarea");
+    ta.name = id;
+    q.appendChild(ta);
+    container.appendChild(q);
+  };
+  mk("E9_challenge", "E9. In your view, what is the single greatest challenge your business faces in understanding or complying with tax regulations?");
+  mk("E10_improve", "E10. What can the Ghana Revenue Authority do to improve its tax education for businesses like yours?");
+})();
+
+/* ============ VALIDATION + SUBMIT ============ */
+const form = document.getElementById("surveyForm");
+const statusMsg = document.getElementById("statusMsg");
+const submitBtn = document.getElementById("submitBtn");
+const consentBox = document.getElementById("consent");
+const consentError = document.getElementById("consentError");
+
+form.addEventListener("submit", function(e){
+  e.preventDefault();
+  statusMsg.textContent = "";
+
+  let valid = true;
+  let firstInvalid = null;
+
+  if(!consentBox.checked){
+    valid = false;
+    consentError.classList.add("show");
+    firstInvalid = firstInvalid || consentBox;
+  } else {
+    consentError.classList.remove("show");
+  }
+
+  // validate each .q block that has required radios
+  document.querySelectorAll(".q").forEach(q=>{
+    const radios = q.querySelectorAll('input[type=radio][required]');
+    if(radios.length){
+      const name = radios[0].name;
+      const checked = q.querySelector('input[name="'+name+'"]:checked');
+      if(!checked){
+        valid = false;
+        q.classList.add("invalid");
+        q.querySelector(".error-msg")?.classList.add("show");
+        firstInvalid = firstInvalid || q;
+      } else {
+        q.classList.remove("invalid");
+        q.querySelector(".error-msg")?.classList.remove("show");
+        // check conditional "other" text requirement
+        if(checked.value === "Other"){
+          const otherInput = q.querySelector('.other-input');
+          if(otherInput && !otherInput.value.trim()){
+            valid = false;
+            otherInput.style.borderColor = "var(--red)";
+            firstInvalid = firstInvalid || otherInput;
+          } else if(otherInput){
+            otherInput.style.borderColor = "";
+          }
+        }
+      }
+    }
+  });
+
+  if(!valid){
+    statusMsg.textContent = "Please complete all required fields highlighted above.";
+    statusMsg.style.color = "var(--red)";
+    if(firstInvalid) firstInvalid.scrollIntoView({behavior:"smooth", block:"center"});
+    return;
+  }
+
+  submitBtn.disabled = true;
+  statusMsg.style.color = "var(--muted)";
+  statusMsg.textContent = "Submitting your response…";
+
+  const formData = new FormData(form);
+  const payload = new URLSearchParams();
+  for(const [key, value] of formData.entries()){
+    payload.append(key, value);
+  }
+  payload.append("timestamp", new Date().toISOString());
+
+  fetch(SCRIPT_URL, {
+    method: "POST",
+    mode: "no-cors",
+    headers: {"Content-Type":"application/x-www-form-urlencoded"},
+    body: payload.toString()
+  }).then(()=>{
+    document.getElementById("formView").classList.add("hidden");
+    document.getElementById("thankyouView").classList.remove("hidden");
+    window.scrollTo({top:0, behavior:"smooth"});
+  }).catch(()=>{
+    statusMsg.style.color = "var(--red)";
+    statusMsg.textContent = "Something went wrong. Please check your internet connection and try again.";
+    submitBtn.disabled = false;
+  });
+});
+</script>
+</body>
+</html>
