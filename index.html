@@ -155,18 +155,46 @@
   }
   .opt:hover{border-color:var(--green);}
   .opt input{accent-color:var(--green);width:16px;height:16px;}
-  .opt.has-other{flex-basis:100%;}
-  .other-input{
-    margin-top:8px;
-    width:100%;
-    padding:9px 10px;
-    border:1px solid var(--line);
-    border-radius:6px;
-    font-size:0.9rem;
-    display:none;
-    font-family:inherit;
+  .opt:has(input:checked){
+    border-color:var(--green);
+    background:var(--green-pale);
   }
-  .other-input.active{display:block;}
+  .opt.has-other{position:relative;}
+  .opt .other-flag{
+    color:var(--red);
+    font-weight:700;
+    margin-left:2px;
+  }
+  .other-panel{
+    display:none;
+    margin-top:10px;
+    background:var(--green-pale);
+    border:1px solid var(--green);
+    border-radius:10px;
+    padding:14px 16px;
+  }
+  .other-panel.active{display:block;}
+  .other-panel-label{
+    display:block;
+    font-weight:700;
+    font-size:0.87rem;
+    margin-bottom:8px;
+    color:var(--green-dark);
+  }
+  .other-panel input{
+    width:100%;
+    padding:10px 12px;
+    border:1px solid var(--line);
+    border-radius:8px;
+    font-size:0.92rem;
+    font-family:inherit;
+    background:#fff;
+  }
+  .other-panel input:focus{
+    outline:none;
+    border-color:var(--green);
+    box-shadow:0 0 0 2px rgba(11,122,61,0.15);
+  }
   textarea{
     width:100%;
     min-height:70px;
@@ -351,14 +379,14 @@
 <script>
 /* ============ CONFIGURATION ============ */
 // Replace with your deployed Google Apps Script Web App URL (see SETUP_INSTRUCTIONS.md)
-const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxkPkV8blWO2Q-nuVBblufPPEUr5_4xhKFBVZNoQuMN_AO5k2nr4MqstmkTrAbguN3L/exec";
+const SCRIPT_URL = "PASTE_YOUR_GOOGLE_APPS_SCRIPT_WEB_APP_URL_HERE";
 
 /* ============ DATA ============ */
 const sectionA = [
   {id:"A1", label:"A1. Gender", options:["Male","Female"]},
   {id:"A2", label:"A2. Age (in years)", options:["18–29","30–39","40–49","50 and above"]},
   {id:"A3", label:"A3. Highest level of education", options:["No formal education","Basic education","Secondary/vocational education","Tertiary education"]},
-  {id:"A4", label:"A4. Type of business", options:["Trading","Services","Agro-processing","Hospitality","Light manufacturing","Other"], other:true},
+  {id:"A4", label:"A4. Type of business", options:["Trading","Services","Agro-processing","Hospitality","Light manufacturing","Other"], other:true, otherPlaceholder:"e.g. Real estate, Education, ICT/Technology, Agriculture..."},
   {id:"A5", label:"A5. Number of years the business has been in operation", options:["Less than 1 year","1–5 years","6–10 years","More than 10 years"]},
   {id:"A6", label:"A6. Is your business registered with any authority?", options:["Registered with the Registrar of Companies/ORC","Registered with the Metropolitan Assembly only","Not registered"]},
   {id:"A7", label:"A7. Number of employees (including yourself)", options:["1–5","6–29","30–99"]}
@@ -430,56 +458,73 @@ sectionA.forEach(q=>{
     const isOther = q.other && optText === "Other";
     const wrap = document.createElement("label");
     wrap.className = "opt" + (isOther ? " has-other" : "");
+
     const input = document.createElement("input");
     input.type = "radio";
     input.name = q.id;
     input.value = isOther ? "Other" : optText;
     input.required = true;
     wrap.appendChild(input);
+
     const span = document.createElement("span");
-    span.textContent = isOther ? "Other (please specify)" : optText;
+    span.textContent = isOther ? "Other (please specify below)" : optText;
     wrap.appendChild(span);
-
     if(isOther){
-      const otherBox = document.createElement("input");
-      otherBox.type = "text";
-      otherBox.className = "other-input";
-      otherBox.name = q.id + "_other";
-      otherBox.placeholder = "Please specify";
-      otherBox.setAttribute("aria-required", "false");
-      wrap.appendChild(otherBox);
-
-      // Activate + make mandatory only when THIS "Other" option is chosen
-      input.addEventListener("change", ()=>{
-        otherBox.classList.add("active");
-        otherBox.required = true;
-        otherBox.setAttribute("aria-required", "true");
-        otherBox.focus();
-      });
+      const flag = document.createElement("span");
+      flag.className = "other-flag";
+      flag.textContent = "*";
+      wrap.appendChild(flag);
     }
 
     opts.appendChild(wrap);
   });
 
-  // Deactivate + un-require the specify box whenever a NON-"Other" option
-  // is chosen for this question (keeps it inactive by default, and only
-  // ever mandatory while "Other" is the selected answer).
-  div.addEventListener("change", (e)=>{
-    if(e.target.type === "radio"){
-      div.querySelectorAll(".other-input").forEach(ob=>{
-        if(e.target.value !== "Other"){
-          ob.classList.remove("active");
-          ob.required = false;
-          ob.setAttribute("aria-required", "false");
-          ob.style.borderColor = "";
-          ob.value = "";
-        }
-      });
-      div.classList.remove("invalid");
+  div.appendChild(opts);
+
+  // Separate highlighted panel for the "Other, please specify" input —
+  // hidden and non-mandatory by default, shown and required only while
+  // "Other" is the selected answer for this question.
+  let otherPanel = null, otherBox = null;
+  if(q.other){
+    otherPanel = document.createElement("div");
+    otherPanel.className = "other-panel";
+
+    const panelLabel = document.createElement("label");
+    panelLabel.className = "other-panel-label";
+    panelLabel.innerHTML = "Please specify: " + '<span class="req">*</span>';
+    otherPanel.appendChild(panelLabel);
+
+    otherBox = document.createElement("input");
+    otherBox.type = "text";
+    otherBox.className = "other-input";
+    otherBox.name = q.id + "_other";
+    otherBox.placeholder = q.otherPlaceholder || "Please specify";
+    otherBox.setAttribute("aria-required", "false");
+    otherPanel.appendChild(otherBox);
+
+    div.appendChild(otherPanel);
+  }
+
+  // Show/require the panel only when "Other" is selected; hide, clear,
+  // and un-require it the moment any other option is chosen.
+  opts.addEventListener("change", (e)=>{
+    if(e.target.type !== "radio") return;
+    div.classList.remove("invalid");
+    if(!q.other) return;
+    if(e.target.value === "Other"){
+      otherPanel.classList.add("active");
+      otherBox.required = true;
+      otherBox.setAttribute("aria-required", "true");
+      otherBox.focus();
+    } else {
+      otherPanel.classList.remove("active");
+      otherBox.required = false;
+      otherBox.setAttribute("aria-required", "false");
+      otherBox.style.borderColor = "";
+      otherBox.value = "";
     }
   });
 
-  div.appendChild(opts);
   const err = document.createElement("div");
   err.className = "error-msg";
   err.textContent = "This field is required.";
